@@ -10,6 +10,7 @@ import Debts from "./pages/Debts";
 import Credits from "./pages/Credits";
 import Testament from "./pages/Testament";
 import Contacts from "./pages/Contacts";
+import Assets from "./pages/Assets";
 import Profile from "./pages/Profile";
 import { Toaster } from "react-hot-toast";
 
@@ -99,6 +100,14 @@ function App() {
             <OnboardedRoute>
               <MainLayout>
                 <Contacts />
+              </MainLayout>
+            </OnboardedRoute>
+          } />
+
+          <Route path="/varliklar" element={
+            <OnboardedRoute>
+              <MainLayout>
+                <Assets />
               </MainLayout>
             </OnboardedRoute>
           } />

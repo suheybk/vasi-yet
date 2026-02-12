@@ -8,6 +8,7 @@ import {
     FaCoins,
     FaGem,
     FaScroll,
+    FaBuilding,
     FaUserFriends,
     FaUser,
     FaShieldAlt,
@@ -38,6 +39,7 @@ const MainLayout = ({ children }) => {
         { path: "/borclar", label: "Borçlarım", icon: <FaCoins /> },
         { path: "/alacaklar", label: "Alacaklarım", icon: <FaGem /> },
         { path: "/vasiyet", label: "Vasiyet", icon: <FaScroll /> },
+        { path: "/varliklar", label: "Mal Varlığı", icon: <FaBuilding /> },
         { path: "/kisiler", label: "Güvenilir Kişiler", icon: <FaUserFriends /> },
         { path: "/profil", label: "Profilim", icon: <FaUser /> },
     ];

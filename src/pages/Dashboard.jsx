@@ -17,7 +17,7 @@ import Card from "../components/ui/Card";
 import { formatCurrency } from "../utils/formatters";
 
 const Dashboard = () => {
-    const { currentUser } = useAuth();
+    const { currentUser, userProfile } = useAuth();
     const navigate = useNavigate();
     const [stats, setStats] = useState({
         debtsCount: 0,
@@ -135,7 +135,7 @@ const Dashboard = () => {
                 <div className="absolute top-0 right-0 -mt-4 -mr-4 opacity-10">
                     <FaQuoteRight size={150} />
                 </div>
-                <h1 className="text-3xl font-bold relative z-10">Hoşgeldiniz, {currentUser?.email}</h1>
+                <h1 className="text-3xl font-bold relative z-10">Hoşgeldiniz, {userProfile?.displayName || currentUser?.displayName || currentUser?.email}</h1>
                 <p className="mt-2 text-blue-100 relative z-10 max-w-2xl">
                     Bugün vasiyetinizi güncellemek veya mali durumunuzu gözden geçirmek için güzel bir gün.
                 </p>
