@@ -1,6 +1,6 @@
-# Vasiyetimdir Web Projesi
+# Wasiyet Web Projesi
 
-Vasiyetimdir, kullanıcıların finansal durumlarını (borç, alacak), vasiyetlerini ve güvenilir kişilerini yönetebilecekleri güvenli bir web uygulamasıdır.
+Wasiyet, kullanıcıların finansal durumlarını (borç, alacak), vasiyetlerini ve güvenilir kişilerini yönetebilecekleri güvenli bir web uygulamasıdır.
 
 ## Özellikler
 

@@ -22,7 +22,9 @@ import {
     FaCrown,
     FaExclamationCircle,
     FaLightbulb,
-    FaGlobe
+    FaGlobe,
+    FaFingerprint,
+    FaUserShield
 } from "react-icons/fa";
 import PricingModal from "./PricingModal";
 import toast from "react-hot-toast";
@@ -83,10 +85,10 @@ const MainLayout = ({ children }) => {
         { path: "/emanetler", label: "Emanetler", icon: <FaBoxOpen />, isPremium: true },
         { path: "/dini-yukumlulukler", label: "Dini Yükümlülükler", icon: <FaMosque />, isPremium: true },
         { path: "/projeler", label: "İş ve Projeler", icon: <FaBriefcase />, isPremium: true },
-        { path: "/vasi-atama", label: "Vasi Atama", icon: <FaShieldAlt />, isPremium: true },
+        { path: "/vasi-atama", label: "Vasi Atama", icon: <FaUserShield />, isPremium: true },
         { path: "/cenaze-plani", label: "Cenaze Planı", icon: <FaMosque />, isPremium: true },
         { path: "/kisiler", label: "Güvenilir Kişiler", icon: <FaUserFriends />, isPremium: true },
-        { path: "/dijital-miras", label: "Dijital Miras", icon: <FaGlobe />, isPremium: true },
+        { path: "/dijital-miras", label: "Dijital Miras", icon: <FaFingerprint />, isPremium: true },
     ];
 
     const isEmailVerified = currentUser?.emailVerified;

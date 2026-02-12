@@ -20,10 +20,17 @@ const formatDatePDF = (dateStr) => {
 
 async function fetchCollection(userId, collectionName) {
     try {
-        const q = query(collection(db, collectionName, userId, "items"), orderBy("createdAt", "desc"));
+        // Special case for subcollections like digital_legacy/items/accounts
+        let colRef;
+        if (collectionName.includes('/')) {
+            colRef = collection(db, collectionName.replace('userId', userId));
+        } else {
+            colRef = collection(db, collectionName, userId, "items");
+        }
+        const q = query(colRef, orderBy("createdAt", "desc"));
         const snap = await getDocs(q);
         return snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    } catch { return []; }
+    } catch (e) { console.error("Fetch error for " + collectionName, e); return []; }
 }
 
 async function fetchDocument(userId, collectionName) {
@@ -125,7 +132,7 @@ export async function generatePDF(currentUser, userProfile) {
 
     // Fetch all data
     const [debts, credits, assets, trusts, contacts, forgivenessItems,
-        charityItems, projects, guardianshipItems] = await Promise.all([
+        charityItems, projects, guardianshipItems, digitalLegacyAccounts] = await Promise.all([
             fetchCollection(currentUser.uid, "debts"),
             fetchCollection(currentUser.uid, "credits"),
             fetchCollection(currentUser.uid, "assets"),
@@ -135,6 +142,7 @@ export async function generatePDF(currentUser, userProfile) {
             fetchCollection(currentUser.uid, "charity_wills"),
             fetchCollection(currentUser.uid, "projects"),
             fetchCollection(currentUser.uid, "guardianship"),
+            fetchCollection(currentUser.uid, "digital_legacy/userId/accounts"), // Using userId placeholder
         ]);
 
     const [testamentSnap, religiousObl, funeralPlan] = await Promise.all([
@@ -556,6 +564,40 @@ export async function generatePDF(currentUser, userProfile) {
         });
     } else {
         pdf.setFontSize(9); pdf.setTextColor(...GRAY); pdf.text("Proje kaydı bulunmuyor.", 20, y);
+    }
+    addPageNumber(pdf, pageNum.current);
+
+    // ═══════════════════════════════════════════
+    // PAGE 12: Dijital Miras
+    // ═══════════════════════════════════════════
+    pdf.addPage();
+    pageNum.current++;
+    y = 25;
+    y = addSectionHeader(pdf, "DİJİTAL MİRAS", y);
+    y += 3;
+    const legacyCategories = { social: "Sosyal Medya", email: "E-posta", finance: "Finans/Banka", cloud: "Bulut Depolama", crypto: "Kripto/Cüzdan", subscription: "Abonelik", other: "Diğer" };
+    if (digitalLegacyAccounts && digitalLegacyAccounts.length > 0) {
+        autoTable(pdf, {
+            startY: y,
+            head: [["Platform", "Kategori", "Kullanıcı Adı / E-posta"]],
+            body: digitalLegacyAccounts.map(a => [
+                a.platform || "-",
+                legacyCategories[a.category] || a.category || "-",
+                a.username || "-"
+            ]),
+            styles: { fontSize: 9, cellPadding: 3, font: "Roboto" },
+            headStyles: { fillColor: NAVY, textColor: [255, 255, 255], fontStyle: "bold" },
+            alternateRowStyles: { fillColor: LIGHT_BG },
+            margin: { left: 20, right: 20 },
+        });
+        y = pdf.lastAutoTable.finalY + 10;
+        pdf.setFontSize(9);
+        pdf.setTextColor(...GRAY);
+        pdf.text("UYARI: Güvenlik gereği şifreler ve gizli notlar bu genel belgeye dahil edilmemiştir.", 20, y);
+        y += 5;
+        pdf.text("Bu bilgiler sistemde şifreli olarak saklanmaktadır.", 20, y);
+    } else {
+        pdf.setFontSize(9); pdf.setTextColor(...GRAY); pdf.text("Dijital miras kaydı bulunmuyor.", 20, y);
     }
     addPageNumber(pdf, pageNum.current);
 

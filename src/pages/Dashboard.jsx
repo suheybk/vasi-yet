@@ -35,6 +35,7 @@ const Dashboard = () => {
     const [forgivenessCount, setForgivenessCount] = useState(0);
     const [charityCount, setCharityCount] = useState(0);
     const [projectCount, setProjectCount] = useState(0);
+    const [digitalLegacyCount, setDigitalLegacyCount] = useState(0);
     const [loading, setLoading] = useState(true);
     const [quote, setQuote] = useState({ text: "", source: "" });
     const [pdfLoading, setPdfLoading] = useState(false);
@@ -68,7 +69,7 @@ const Dashboard = () => {
         setLoading(true);
 
         let loadedCount = 0;
-        const totalToLoad = 11;
+        const totalToLoad = 12;
         const checkLoaded = () => { loadedCount++; if (loadedCount >= totalToLoad) setLoading(false); };
 
         const assetTypeLabels = { gayrimenkul: "Gayrimenkul", arac: "Araç", altin: "Altın", nakit: "Nakit", hisse: "Hisse/Fon", diger: "Diğer" };
@@ -145,6 +146,11 @@ const Dashboard = () => {
             checkLoaded();
         }, (error) => { console.error("Guardian listener error:", error); checkLoaded(); });
 
+        const unsubDigitalLegacy = onSnapshot(collection(db, "digital_legacy", currentUser.uid, "accounts"), (snap) => {
+            setDigitalLegacyCount(snap.size);
+            checkLoaded();
+        }, (error) => { console.error("Digital Legacy listener error:", error); checkLoaded(); });
+
         // Single doc fetches
         getDoc(doc(db, "religious_obligations", currentUser.uid)).then(snap => {
             if (snap.exists()) setSpiritual(snap.data());
@@ -158,7 +164,7 @@ const Dashboard = () => {
         return () => {
             unsubDebts(); unsubCredits(); unsubTestament(); unsubContacts();
             unsubAssets(); unsubTrusts(); unsubForgiveness(); unsubCharity();
-            unsubProjects(); unsubGuardian();
+            unsubProjects(); unsubGuardian(); unsubDigitalLegacy();
         };
     }, [currentUser]);
 
@@ -172,6 +178,7 @@ const Dashboard = () => {
         { label: "Cenaze planı tamamlandı", done: !!funeralPlan, path: "/cenaze-plani" },
         { label: "Helallik listesi oluşturuldu", done: forgivenessCount > 0, path: "/helallik" },
         { label: "Hayır vasiyetleri eklendi", done: charityCount > 0, path: "/hayir-vasiyetleri" },
+        { label: "Dijital miras planlandı", done: digitalLegacyCount > 0, path: "/dijital-miras" },
     ];
     const completedCount = completionItems.filter(i => i.done).length;
     const completionPercent = Math.round((completedCount / completionItems.length) * 100);
@@ -198,6 +205,7 @@ const Dashboard = () => {
         { label: "Alacak Ekle", icon: <FaGem />, path: "/alacaklar", color: "bg-green-500 hover:bg-green-600" },
         { label: "Vasiyet Yaz", icon: <FaScroll />, path: "/vasiyet", color: "bg-purple-500 hover:bg-purple-600" },
         { label: "Varlık Ekle", icon: <FaBuilding />, path: "/varliklar", color: "bg-yellow-500 hover:bg-yellow-600" },
+        { label: "Dijital Miras", icon: <FaShieldAlt />, path: "/dijital-miras", color: "bg-blue-600 hover:bg-blue-700" },
         { label: "Emanet Ekle", icon: <FaBoxOpen />, path: "/emanetler", color: "bg-indigo-500 hover:bg-indigo-600" },
         { label: "Kişi Ekle", icon: <FaUserFriends />, path: "/kisiler", color: "bg-blue-500 hover:bg-blue-600" },
     ];
