@@ -15,6 +15,7 @@ import Trusts from "./pages/Trusts";
 import ReligiousObligations from "./pages/ReligiousObligations";
 import ForgivenessRequests from "./pages/ForgivenessRequests";
 import CharityWills from "./pages/CharityWills";
+import Projects from "./pages/Projects";
 import Profile from "./pages/Profile";
 import { Toaster } from "react-hot-toast";
 
@@ -144,6 +145,14 @@ function App() {
             <OnboardedRoute>
               <MainLayout>
                 <CharityWills />
+              </MainLayout>
+            </OnboardedRoute>
+          } />
+
+          <Route path="/projeler" element={
+            <OnboardedRoute>
+              <MainLayout>
+                <Projects />
               </MainLayout>
             </OnboardedRoute>
           } />

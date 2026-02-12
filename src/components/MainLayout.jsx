@@ -13,6 +13,7 @@ import {
     FaMosque,
     FaHandshake,
     FaHandHoldingHeart,
+    FaBriefcase,
     FaUserFriends,
     FaUser,
     FaShieldAlt,
@@ -48,6 +49,7 @@ const MainLayout = ({ children }) => {
         { path: "/dini-yukumlulukler", label: "Dini Yükümlülükler", icon: <FaMosque /> },
         { path: "/helallik", label: "Helallik İsteği", icon: <FaHandshake /> },
         { path: "/hayir-vasiyetleri", label: "Hayır Vasiyetleri", icon: <FaHandHoldingHeart /> },
+        { path: "/projeler", label: "İş ve Projeler", icon: <FaBriefcase /> },
         { path: "/kisiler", label: "Güvenilir Kişiler", icon: <FaUserFriends /> },
         { path: "/profil", label: "Profilim", icon: <FaUser /> },
     ];

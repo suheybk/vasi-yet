@@ -46,5 +46,9 @@ service cloud.firestore {
     match /charity_wills/{userId}/items/{item} {
       allow read, write: if isOwner(userId);
     }
+
+    match /projects/{userId}/items/{item} {
+      allow read, write: if isOwner(userId);
+    }
   }
 }
