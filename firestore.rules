@@ -34,5 +34,9 @@ service cloud.firestore {
     match /trusts/{userId}/items/{item} {
       allow read, write: if isOwner(userId);
     }
+
+    match /religious_obligations/{userId} {
+      allow read, write: if isOwner(userId);
+    }
   }
 }

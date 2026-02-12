@@ -12,6 +12,7 @@ import Testament from "./pages/Testament";
 import Contacts from "./pages/Contacts";
 import Assets from "./pages/Assets";
 import Trusts from "./pages/Trusts";
+import ReligiousObligations from "./pages/ReligiousObligations";
 import Profile from "./pages/Profile";
 import { Toaster } from "react-hot-toast";
 
@@ -117,6 +118,14 @@ function App() {
             <OnboardedRoute>
               <MainLayout>
                 <Trusts />
+              </MainLayout>
+            </OnboardedRoute>
+          } />
+
+          <Route path="/dini-yukumlulukler" element={
+            <OnboardedRoute>
+              <MainLayout>
+                <ReligiousObligations />
               </MainLayout>
             </OnboardedRoute>
           } />
