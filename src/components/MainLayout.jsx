@@ -5,15 +5,17 @@ import {
     FaBars,
     FaTimes,
     FaHome,
-    FaFileInvoiceDollar,
-    FaHandHoldingUsd,
+    FaCoins,
+    FaGem,
     FaScroll,
     FaUserFriends,
+    FaUser,
+    FaShieldAlt,
     FaSignOutAlt
 } from "react-icons/fa";
 
 const MainLayout = ({ children }) => {
-    const { currentUser, logout } = useAuth();
+    const { currentUser, userProfile, logout } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -29,12 +31,15 @@ const MainLayout = ({ children }) => {
 
     const toggleSidebar = () => setIsSidebarOpen(!isSidebarOpen);
 
+    const displayName = userProfile?.displayName || currentUser?.displayName || currentUser?.email;
+
     const navItems = [
-        { path: "/dashboard", label: "Dashboard", icon: <FaHome /> },
-        { path: "/borclar", label: "Borçlarım", icon: <FaFileInvoiceDollar /> },
-        { path: "/alacaklar", label: "Alacaklarım", icon: <FaHandHoldingUsd /> },
+        { path: "/dashboard", label: "Anasayfa", icon: <FaHome /> },
+        { path: "/borclar", label: "Borçlarım", icon: <FaCoins /> },
+        { path: "/alacaklar", label: "Alacaklarım", icon: <FaGem /> },
         { path: "/vasiyet", label: "Vasiyet", icon: <FaScroll /> },
         { path: "/kisiler", label: "Güvenilir Kişiler", icon: <FaUserFriends /> },
+        { path: "/profil", label: "Profilim", icon: <FaUser /> },
     ];
 
     return (
@@ -57,12 +62,12 @@ const MainLayout = ({ children }) => {
             {/* Sidebar */}
             <aside
                 className={`
-                    fixed inset-y-0 left-0 z-30 w-64 bg-primary text-white transform transition-transform duration-300 ease-in-out shadow-2xl
+                    fixed inset-y-0 left-0 z-30 w-64 bg-primary text-white transform transition-transform duration-300 ease-in-out shadow-2xl flex flex-col
                     ${isSidebarOpen ? "translate-x-0" : "-translate-x-full"}
                     lg:relative lg:translate-x-0
                 `}
             >
-                <div className="flex items-center justify-between h-16 px-6 bg-blue-900 shadow-md">
+                <div className="flex items-center justify-between h-16 px-6 bg-blue-900 shadow-md flex-shrink-0">
                     <span className="text-2xl font-bold tracking-wider text-secondary">Vasiyetimdir</span>
                     <button onClick={toggleSidebar} className="lg:hidden text-white hover:text-secondary">
                         <FaTimes className="w-6 h-6" />
@@ -71,10 +76,10 @@ const MainLayout = ({ children }) => {
 
                 <div className="px-6 py-4 border-b border-blue-800">
                     <p className="text-sm text-blue-200">Hoşgeldiniz,</p>
-                    <p className="text-sm font-medium truncate" title={currentUser?.email}>{currentUser?.email}</p>
+                    <p className="text-sm font-medium truncate" title={displayName}>{displayName}</p>
                 </div>
 
-                <nav className="mt-6 px-4 space-y-2">
+                <nav className="mt-6 px-4 space-y-2 flex-1">
                     {navItems.map((item) => (
                         <Link
                             key={item.path}
@@ -100,6 +105,18 @@ const MainLayout = ({ children }) => {
                         <span>Çıkış Yap</span>
                     </button>
                 </nav>
+
+                {/* Privacy Footer */}
+                <div className="px-4 pb-4 mt-auto">
+                    <Link
+                        to="/gizlilik"
+                        className="flex items-center gap-2 px-4 py-2 text-xs text-blue-300 hover:text-blue-100 transition-colors"
+                        onClick={() => setIsSidebarOpen(false)}
+                    >
+                        <FaShieldAlt className="text-blue-400" />
+                        Gizlilik & KVKK
+                    </Link>
+                </div>
             </aside>
 
             {/* Main Content */}

@@ -164,6 +164,9 @@ const Auth = () => {
                             {isLogin ? "Kayıt Olun" : "Giriş Yapın"}
                         </button>
                     </p>
+                    <p className="text-xs text-gray-400 mt-3">
+                        Kayıt olarak <a href="/gizlilik" className="underline hover:text-gray-600" target="_blank" rel="noreferrer">KVKK ve Gizlilik Sözleşmesi</a>'ni kabul etmiş sayılırsınız.
+                    </p>
                 </div>
             </div>
         </div>

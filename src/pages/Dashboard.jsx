@@ -1,28 +1,40 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 import { db } from "../firebase/config";
-import { collection, query, where, onSnapshot } from "firebase/firestore";
+import { collection, onSnapshot, doc, getDoc } from "firebase/firestore";
 import {
-    FaFileInvoiceDollar,
-    FaHandHoldingUsd,
+    FaCoins,
+    FaGem,
     FaScroll,
     FaUserFriends,
-    FaQuoteRight
+    FaQuoteRight,
+    FaChartLine,
+    FaPercentage,
+    FaCalendarAlt
 } from "react-icons/fa";
 import Card from "../components/ui/Card";
+import { formatCurrency } from "../utils/formatters";
 
 const Dashboard = () => {
     const { currentUser } = useAuth();
+    const navigate = useNavigate();
     const [stats, setStats] = useState({
         debtsCount: 0,
         creditsCount: 0,
         hasTestament: false,
-        contactsCount: 0
+        contactsCount: 0,
+        totalDebt: 0,
+        totalCredit: 0,
+        paidDebts: 0,
+        paidCredits: 0,
+        totalDebts: 0,
+        totalCredits: 0,
+        nearestDueCredit: null
     });
     const [loading, setLoading] = useState(true);
     const [quote, setQuote] = useState({ text: "", source: "" });
 
-    // Islamic Quotes / Ayats
     const quotes = [
         { text: "Her nefis ölümü tadacaktır. Sizi bir imtihan olarak hayır ile de şer ile de deniyoruz. Ancak bize döndürüleceksiniz.", source: "Enbiyâ Suresi, 35. Ayet" },
         { text: "Ey iman edenler! Allah'tan korkun ve herkes, yarına ne hazırladığına baksın. Allah'tan korkun, çünkü Allah yaptıklarınızdan haberdardır.", source: "Haşr Suresi, 18. Ayet" },
@@ -32,34 +44,51 @@ const Dashboard = () => {
     ];
 
     useEffect(() => {
-        // Random quote logic
         const randomQuote = quotes[Math.floor(Math.random() * quotes.length)];
         setQuote(randomQuote);
 
         if (!currentUser) return;
-
         setLoading(true);
 
-        const qDebts = collection(db, "debts", currentUser.uid, "items");
-        const qCredits = collection(db, "credits", currentUser.uid, "items");
-        const qTestament = collection(db, "testaments", currentUser.uid, "items");
-        const qContacts = collection(db, "contacts", currentUser.uid, "items");
+        let loadedCount = 0;
+        const checkLoaded = () => { loadedCount++; if (loadedCount >= 4) setLoading(false); };
 
-        const unsubDebts = onSnapshot(qDebts, (snapshot) => {
-            setStats(prev => ({ ...prev, debtsCount: snapshot.size }));
+        const unsubDebts = onSnapshot(collection(db, "debts", currentUser.uid, "items"), (snapshot) => {
+            const items = snapshot.docs.map(d => d.data());
+            const unpaid = items.filter(i => !i.isPaid);
+            const totalDebt = unpaid.reduce((sum, i) => sum + (i.amount || 0), 0);
+            const paidDebts = items.filter(i => i.isPaid).length;
+            setStats(prev => ({ ...prev, debtsCount: unpaid.length, totalDebt, paidDebts, totalDebts: items.length }));
+            checkLoaded();
         });
 
-        const unsubCredits = onSnapshot(qCredits, (snapshot) => {
-            setStats(prev => ({ ...prev, creditsCount: snapshot.size }));
+        const unsubCredits = onSnapshot(collection(db, "credits", currentUser.uid, "items"), (snapshot) => {
+            const items = snapshot.docs.map(d => d.data());
+            const unpaid = items.filter(i => !i.isPaid);
+            const totalCredit = unpaid.reduce((sum, i) => sum + (i.amount || 0), 0);
+            const paidCredits = items.filter(i => i.isPaid).length;
+            // Find nearest due credit
+            const today = new Date().toISOString().split('T')[0];
+            const upcoming = unpaid
+                .filter(i => i.date && i.date >= today)
+                .sort((a, b) => a.date.localeCompare(b.date));
+            const nearestDueCredit = upcoming.length > 0 ? upcoming[0] : null;
+            setStats(prev => ({ ...prev, creditsCount: unpaid.length, totalCredit, paidCredits, totalCredits: items.length, nearestDueCredit }));
+            checkLoaded();
         });
 
-        const unsubTestament = onSnapshot(qTestament, (snapshot) => {
-            setStats(prev => ({ ...prev, hasTestament: snapshot.size > 0 }));
+        const unsubTestament = onSnapshot(collection(db, "testaments", currentUser.uid, "items"), (snapshot) => {
+            let hasContent = false;
+            snapshot.docs.forEach(d => {
+                if (d.data().text && d.data().text.trim().length > 0) hasContent = true;
+            });
+            setStats(prev => ({ ...prev, hasTestament: hasContent }));
+            checkLoaded();
         });
 
-        const unsubContacts = onSnapshot(qContacts, (snapshot) => {
+        const unsubContacts = onSnapshot(collection(db, "contacts", currentUser.uid, "items"), (snapshot) => {
             setStats(prev => ({ ...prev, contactsCount: snapshot.size }));
-            setLoading(false);
+            checkLoaded();
         });
 
         return () => {
@@ -70,15 +99,18 @@ const Dashboard = () => {
         };
     }, [currentUser]);
 
-    const StatCard = ({ title, value, icon, colorClass }) => (
-        <Card className={`p-6 border-l-4 ${colorClass} hover:translate-y-[-4px] cursor-pointer`}>
+    const debtPaymentPercent = stats.totalDebts > 0 ? Math.round((stats.paidDebts / stats.totalDebts) * 100) : 0;
+    const creditPaymentPercent = stats.totalCredits > 0 ? Math.round((stats.paidCredits / stats.totalCredits) * 100) : 0;
+
+    const StatCard = ({ title, value, icon, colorClass, onClick }) => (
+        <Card className={`p - 6 border - l - 4 ${colorClass} hover: translate - y - [-4px] cursor - pointer`} onClick={onClick}>
             <div className="flex justify-between items-center">
                 <div>
                     <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wider">{title}</h3>
                     <p className="text-3xl font-bold text-gray-800 mt-2">{value}</p>
                 </div>
-                <div className={`p-3 rounded-full bg-opacity-20 ${colorClass.replace('border-', 'bg-').replace('500', '100')}`}>
-                    <span className={`text-2xl ${colorClass.replace('border-', 'text-')}`}>{icon}</span>
+                <div className={`p - 3 rounded - full bg - opacity - 20 ${colorClass.replace('border-', 'bg-').replace('500', '100')} `}>
+                    <span className={`text - 2xl ${colorClass.replace('border-', 'text-')} `}>{icon}</span>
                 </div>
             </div>
         </Card>
@@ -107,54 +139,70 @@ const Dashboard = () => {
                 <p className="mt-2 text-blue-100 relative z-10 max-w-2xl">
                     Bugün vasiyetinizi güncellemek veya mali durumunuzu gözden geçirmek için güzel bir gün.
                 </p>
-
-                {/* Daily Quote */}
                 <div className="mt-6 pt-6 border-t border-blue-400/30 relative z-10">
                     <p className="font-serif italic text-lg text-yellow-500">"{quote.text}"</p>
                     <p className="text-sm text-blue-200 mt-2">— {quote.source}</p>
                 </div>
             </div>
 
-            {/* Stats Grid */}
+            {/* Summary Cards */}
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {loading ? (
-                    <>
-                        <SkeletonCard />
-                        <SkeletonCard />
-                        <SkeletonCard />
-                        <SkeletonCard />
-                    </>
+                    <><SkeletonCard /><SkeletonCard /><SkeletonCard /><SkeletonCard /></>
                 ) : (
                     <>
-                        <StatCard
-                            title="Borçlarım"
-                            value={stats.debtsCount}
-                            icon={<FaFileInvoiceDollar />}
-                            colorClass="border-red-500"
-                        />
-                        <StatCard
-                            title="Alacaklarım"
-                            value={stats.creditsCount}
-                            icon={<FaHandHoldingUsd />}
-                            colorClass="border-green-500"
-                        />
-                        <StatCard
-                            title="Vasiyet Durumu"
-                            value={stats.hasTestament ? "Mevcut" : "Oluştur"}
-                            icon={<FaScroll />}
-                            colorClass="border-purple-500"
-                        />
-                        <StatCard
-                            title="Güvenilir Kişiler"
-                            value={stats.contactsCount}
-                            icon={<FaUserFriends />}
-                            colorClass="border-blue-500"
-                        />
+                        <StatCard title="Borçlarım" value={stats.debtsCount} icon={<FaCoins />} colorClass="border-red-500" onClick={() => navigate('/borclar')} />
+                        <StatCard title="Alacaklarım" value={stats.creditsCount} icon={<FaGem />} colorClass="border-green-500" onClick={() => navigate('/alacaklar')} />
+                        <StatCard title="Vasiyet Durumu" value={stats.hasTestament ? "Mevcut" : "Oluştur"} icon={<FaScroll />} colorClass="border-purple-500" onClick={() => navigate('/vasiyet')} />
+                        <StatCard title="Güvenilir Kişiler" value={stats.contactsCount} icon={<FaUserFriends />} colorClass="border-blue-500" onClick={() => navigate('/kisiler')} />
                     </>
                 )}
             </div>
 
-            {/* Empty State / CTA */}
+            {/* Advanced Stats */}
+            {!loading && (
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                    <Card className="p-5 bg-red-50 border border-red-100">
+                        <div className="flex items-center gap-3 mb-2">
+                            <FaChartLine className="text-red-500" />
+                            <span className="text-sm font-medium text-gray-600">Toplam Borç</span>
+                        </div>
+                        <p className="text-2xl font-bold text-red-700">{formatCurrency(stats.totalDebt)}</p>
+                    </Card>
+                    <Card className="p-5 bg-green-50 border border-green-100">
+                        <div className="flex items-center gap-3 mb-2">
+                            <FaChartLine className="text-green-500" />
+                            <span className="text-sm font-medium text-gray-600">Toplam Alacak</span>
+                        </div>
+                        <p className="text-2xl font-bold text-green-700">{formatCurrency(stats.totalCredit)}</p>
+                    </Card>
+                    <Card className="p-5 bg-blue-50 border border-blue-100">
+                        <div className="flex items-center gap-3 mb-2">
+                            <FaPercentage className="text-blue-500" />
+                            <span className="text-sm font-medium text-gray-600">Ödeme Yüzdesi</span>
+                        </div>
+                        <p className="text-2xl font-bold text-blue-700">
+                            Borç: %{debtPaymentPercent} · Alacak: %{creditPaymentPercent}
+                        </p>
+                    </Card>
+                    <Card className="p-5 bg-yellow-50 border border-yellow-100">
+                        <div className="flex items-center gap-3 mb-2">
+                            <FaCalendarAlt className="text-yellow-600" />
+                            <span className="text-sm font-medium text-gray-600">En Yakın Vade</span>
+                        </div>
+                        {stats.nearestDueCredit ? (
+                            <div>
+                                <p className="text-lg font-bold text-yellow-800">{stats.nearestDueCredit.date}</p>
+                                <p className="text-sm text-gray-500">{stats.nearestDueCredit.personName} – {formatCurrency(stats.nearestDueCredit.amount)}</p>
+                            </div>
+                        ) : (
+                            <p className="text-lg font-bold text-gray-400">Vade yok</p>
+                        )}
+                    </Card>
+                </div>
+            )}
+
+            {/* Empty State */}
             {!loading && stats.debtsCount === 0 && stats.creditsCount === 0 && !stats.hasTestament && (
                 <Card className="p-8 text-center bg-gray-50 border-dashed border-2 border-gray-200 shadow-none">
                     <h3 className="text-xl font-semibold text-gray-800 mb-2">Henüz bir kayıt bulunmuyor</h3>

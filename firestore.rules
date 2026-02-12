@@ -21,5 +21,10 @@ service cloud.firestore {
     match /contacts/{userId}/items/{item} {
       allow read, write: if isOwner(userId);
     }
+
+    // User profile (onboarding, KVKK acceptance)
+    match /users/{userId} {
+      allow read, write: if isOwner(userId);
+    }
   }
 }

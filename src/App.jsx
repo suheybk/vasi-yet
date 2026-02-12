@@ -3,65 +3,112 @@ import { AuthProvider, useAuth } from "./context/AuthContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./components/MainLayout";
 import Auth from "./pages/Auth";
+import Onboarding from "./pages/Onboarding";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Dashboard from "./pages/Dashboard";
 import Debts from "./pages/Debts";
 import Credits from "./pages/Credits";
 import Testament from "./pages/Testament";
 import Contacts from "./pages/Contacts";
+import Profile from "./pages/Profile";
+import { Toaster } from "react-hot-toast";
 
-// Redirect to dashboard if logged in, otherwise login
+// Redirect based on auth + onboarding status
 const RootRedirect = () => {
-  const { currentUser } = useAuth();
-  return currentUser ? <Navigate to="/dashboard" /> : <Navigate to="/login" />;
+  const { currentUser, isOnboarded } = useAuth();
+  if (!currentUser) return <Navigate to="/login" />;
+  if (!isOnboarded) return <Navigate to="/onboarding" />;
+  return <Navigate to="/dashboard" />;
+};
+
+// Wrapper that also checks onboarding
+const OnboardedRoute = ({ children }) => {
+  const { currentUser, isOnboarded } = useAuth();
+  if (!currentUser) return <Navigate to="/login" />;
+  if (!isOnboarded) return <Navigate to="/onboarding" />;
+  return children;
 };
 
 function App() {
   return (
     <Router>
       <AuthProvider>
+        <Toaster
+          position="top-right"
+          toastOptions={{
+            duration: 3000,
+            style: {
+              background: '#1e3a8a',
+              color: '#fff',
+              borderRadius: '12px',
+              padding: '12px 20px',
+            },
+            success: {
+              iconTheme: { primary: '#d4af37', secondary: '#fff' },
+            },
+            error: {
+              style: { background: '#dc2626' },
+            },
+          }}
+        />
         <Routes>
           <Route path="/login" element={<Auth />} />
+          <Route path="/gizlilik" element={<PrivacyPolicy />} />
+
+          <Route path="/onboarding" element={
+            <ProtectedRoute>
+              <Onboarding />
+            </ProtectedRoute>
+          } />
 
           <Route path="/" element={<RootRedirect />} />
 
           <Route path="/dashboard" element={
-            <ProtectedRoute>
+            <OnboardedRoute>
               <MainLayout>
                 <Dashboard />
               </MainLayout>
-            </ProtectedRoute>
+            </OnboardedRoute>
           } />
 
           <Route path="/borclar" element={
-            <ProtectedRoute>
+            <OnboardedRoute>
               <MainLayout>
                 <Debts />
               </MainLayout>
-            </ProtectedRoute>
+            </OnboardedRoute>
           } />
 
           <Route path="/alacaklar" element={
-            <ProtectedRoute>
+            <OnboardedRoute>
               <MainLayout>
                 <Credits />
               </MainLayout>
-            </ProtectedRoute>
+            </OnboardedRoute>
           } />
 
           <Route path="/vasiyet" element={
-            <ProtectedRoute>
+            <OnboardedRoute>
               <MainLayout>
                 <Testament />
               </MainLayout>
-            </ProtectedRoute>
+            </OnboardedRoute>
           } />
 
           <Route path="/kisiler" element={
-            <ProtectedRoute>
+            <OnboardedRoute>
               <MainLayout>
                 <Contacts />
               </MainLayout>
-            </ProtectedRoute>
+            </OnboardedRoute>
+          } />
+
+          <Route path="/profil" element={
+            <OnboardedRoute>
+              <MainLayout>
+                <Profile />
+              </MainLayout>
+            </OnboardedRoute>
           } />
         </Routes>
       </AuthProvider>
