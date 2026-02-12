@@ -51,6 +51,7 @@ const MainLayout = ({ children }) => {
         { path: "/hayir-vasiyetleri", label: "Hayır Vasiyetleri", icon: <FaHandHoldingHeart /> },
         { path: "/projeler", label: "İş ve Projeler", icon: <FaBriefcase /> },
         { path: "/vasi-atama", label: "Vasi Atama", icon: <FaShieldAlt /> },
+        { path: "/cenaze-plani", label: "Cenaze Planı", icon: <FaMosque /> },
         { path: "/kisiler", label: "Güvenilir Kişiler", icon: <FaUserFriends /> },
         { path: "/profil", label: "Profilim", icon: <FaUser /> },
     ];

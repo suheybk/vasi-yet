@@ -17,6 +17,7 @@ import ForgivenessRequests from "./pages/ForgivenessRequests";
 import CharityWills from "./pages/CharityWills";
 import Projects from "./pages/Projects";
 import Guardianship from "./pages/Guardianship";
+import FuneralPlan from "./pages/FuneralPlan";
 import Profile from "./pages/Profile";
 import { Toaster } from "react-hot-toast";
 
@@ -162,6 +163,14 @@ function App() {
             <OnboardedRoute>
               <MainLayout>
                 <Guardianship />
+              </MainLayout>
+            </OnboardedRoute>
+          } />
+
+          <Route path="/cenaze-plani" element={
+            <OnboardedRoute>
+              <MainLayout>
+                <FuneralPlan />
               </MainLayout>
             </OnboardedRoute>
           } />
