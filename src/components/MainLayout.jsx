@@ -11,6 +11,7 @@ import {
     FaBuilding,
     FaBoxOpen,
     FaMosque,
+    FaHandshake,
     FaUserFriends,
     FaUser,
     FaShieldAlt,
@@ -44,6 +45,7 @@ const MainLayout = ({ children }) => {
         { path: "/varliklar", label: "Mal Varlığı", icon: <FaBuilding /> },
         { path: "/emanetler", label: "Emanetler", icon: <FaBoxOpen /> },
         { path: "/dini-yukumlulukler", label: "Dini Yükümlülükler", icon: <FaMosque /> },
+        { path: "/helallik", label: "Helallik İsteği", icon: <FaHandshake /> },
         { path: "/kisiler", label: "Güvenilir Kişiler", icon: <FaUserFriends /> },
         { path: "/profil", label: "Profilim", icon: <FaUser /> },
     ];

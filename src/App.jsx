@@ -13,6 +13,7 @@ import Contacts from "./pages/Contacts";
 import Assets from "./pages/Assets";
 import Trusts from "./pages/Trusts";
 import ReligiousObligations from "./pages/ReligiousObligations";
+import ForgivenessRequests from "./pages/ForgivenessRequests";
 import Profile from "./pages/Profile";
 import { Toaster } from "react-hot-toast";
 
@@ -126,6 +127,14 @@ function App() {
             <OnboardedRoute>
               <MainLayout>
                 <ReligiousObligations />
+              </MainLayout>
+            </OnboardedRoute>
+          } />
+
+          <Route path="/helallik" element={
+            <OnboardedRoute>
+              <MainLayout>
+                <ForgivenessRequests />
               </MainLayout>
             </OnboardedRoute>
           } />
