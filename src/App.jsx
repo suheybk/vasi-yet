@@ -14,6 +14,7 @@ import Assets from "./pages/Assets";
 import Trusts from "./pages/Trusts";
 import ReligiousObligations from "./pages/ReligiousObligations";
 import ForgivenessRequests from "./pages/ForgivenessRequests";
+import CharityWills from "./pages/CharityWills";
 import Profile from "./pages/Profile";
 import { Toaster } from "react-hot-toast";
 
@@ -135,6 +136,14 @@ function App() {
             <OnboardedRoute>
               <MainLayout>
                 <ForgivenessRequests />
+              </MainLayout>
+            </OnboardedRoute>
+          } />
+
+          <Route path="/hayir-vasiyetleri" element={
+            <OnboardedRoute>
+              <MainLayout>
+                <CharityWills />
               </MainLayout>
             </OnboardedRoute>
           } />

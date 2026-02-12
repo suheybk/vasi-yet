@@ -42,5 +42,9 @@ service cloud.firestore {
     match /forgiveness_requests/{userId}/items/{item} {
       allow read, write: if isOwner(userId);
     }
+
+    match /charity_wills/{userId}/items/{item} {
+      allow read, write: if isOwner(userId);
+    }
   }
 }
