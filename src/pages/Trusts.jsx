@@ -26,6 +26,7 @@ const Trusts = () => {
     const [deleteId, setDeleteId] = useState(null);
     const [searchTerm, setSearchTerm] = useState("");
     const [activeTab, setActiveTab] = useState("all"); // all, verdigim, aldigim
+    const [sortBy, setSortBy] = useState("date-new");
 
     const [formData, setFormData] = useState({
         type: "verdigim",
@@ -51,6 +52,10 @@ const Trusts = () => {
         const matchesSearch = t.personName.toLowerCase().includes(searchTerm.toLowerCase()) ||
             t.description.toLowerCase().includes(searchTerm.toLowerCase());
         return matchesTab && matchesSearch;
+    }).sort((a, b) => {
+        if (sortBy === "date-new") return (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0);
+        if (sortBy === "date-old") return (a.createdAt?.toDate?.() || 0) - (b.createdAt?.toDate?.() || 0);
+        return 0;
     });
 
     const verdigimCount = trusts.filter(t => t.type === "verdigim").length;
@@ -131,8 +136,8 @@ const Trusts = () => {
                             key={tab.key}
                             onClick={() => setActiveTab(tab.key)}
                             className={`px-4 py-2.5 rounded-lg font-medium text-sm transition min-h-[44px] ${activeTab === tab.key
-                                    ? 'bg-indigo-600 text-white shadow-md'
-                                    : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
+                                ? 'bg-indigo-600 text-white shadow-md'
+                                : 'bg-white text-gray-600 hover:bg-gray-100 border border-gray-200'
                                 }`}
                         >
                             {tab.label} <span className={`ml-1 px-1.5 py-0.5 rounded-full text-xs ${activeTab === tab.key ? 'bg-white/20' : 'bg-gray-200'}`}>{tab.count}</span>
@@ -144,15 +149,28 @@ const Trusts = () => {
             {/* Search */}
             {trusts.length > 0 && (
                 <Card className="p-4">
-                    <div className="relative">
-                        <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
-                        <input
-                            type="text"
-                            placeholder="Kişi adı veya eşya açıklamasına göre ara..."
-                            value={searchTerm}
-                            onChange={(e) => setSearchTerm(e.target.value)}
-                            className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 min-h-[44px]"
-                        />
+                    <div className="flex flex-col lg:flex-row gap-4">
+                        <div className="relative flex-1">
+                            <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
+                            <input
+                                type="text"
+                                placeholder="Kişi adı veya eşya açıklamasına göre ara..."
+                                value={searchTerm}
+                                onChange={(e) => setSearchTerm(e.target.value)}
+                                className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 focus:border-indigo-400 min-h-[44px]"
+                            />
+                        </div>
+                        <select
+                            value={sortBy}
+                            onChange={(e) => setSortBy(e.target.value)}
+                            className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-300 bg-white min-h-[44px] text-sm lg:w-48"
+                        >
+                            <option value="date-new">En Yeni Önce</option>
+                            <option value="date-old">En Eski Önce</option>
+                        </select>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-400 px-1">
+                        {filtered.length} kayıt bulundu
                     </div>
                 </Card>
             )}

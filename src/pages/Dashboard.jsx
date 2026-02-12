@@ -80,7 +80,7 @@ const Dashboard = () => {
             const paidDebts = items.filter(i => i.isPaid).length;
             setStats(prev => ({ ...prev, debtsCount: unpaid.length, totalDebt, paidDebts, totalDebts: items.length }));
             checkLoaded();
-        });
+        }, (error) => { console.error("Debts listener error:", error); checkLoaded(); });
 
         const unsubCredits = onSnapshot(collection(db, "credits", currentUser.uid, "items"), (snap) => {
             const items = snap.docs.map(d => d.data());
@@ -92,19 +92,19 @@ const Dashboard = () => {
             const nearestDueCredit = upcoming.length > 0 ? upcoming[0] : null;
             setStats(prev => ({ ...prev, creditsCount: unpaid.length, totalCredit, paidCredits, totalCredits: items.length, nearestDueCredit }));
             checkLoaded();
-        });
+        }, (error) => { console.error("Credits listener error:", error); checkLoaded(); });
 
         const unsubTestament = onSnapshot(collection(db, "testaments", currentUser.uid, "items"), (snap) => {
             let hasContent = false;
             snap.docs.forEach(d => { if (d.data().text && d.data().text.trim().length > 0) hasContent = true; });
             setStats(prev => ({ ...prev, hasTestament: hasContent }));
             checkLoaded();
-        });
+        }, (error) => { console.error("Testament listener error:", error); checkLoaded(); });
 
         const unsubContacts = onSnapshot(collection(db, "contacts", currentUser.uid, "items"), (snap) => {
             setStats(prev => ({ ...prev, contactsCount: snap.size }));
             checkLoaded();
-        });
+        }, (error) => { console.error("Contacts listener error:", error); checkLoaded(); });
 
         const unsubAssets = onSnapshot(collection(db, "assets", currentUser.uid, "items"), (snap) => {
             const items = snap.docs.map(d => d.data());
@@ -118,32 +118,32 @@ const Dashboard = () => {
             const assetsByType = Object.entries(typeMap).map(([name, value]) => ({ name, value }));
             setStats(prev => ({ ...prev, assetsCount: items.length, totalAssetValue, assetsByType }));
             checkLoaded();
-        });
+        }, (error) => { console.error("Assets listener error:", error); checkLoaded(); });
 
         const unsubTrusts = onSnapshot(collection(db, "trusts", currentUser.uid, "items"), (snap) => {
             setStats(prev => ({ ...prev, trustsCount: snap.size }));
             checkLoaded();
-        });
+        }, (error) => { console.error("Trusts listener error:", error); checkLoaded(); });
 
         const unsubForgiveness = onSnapshot(collection(db, "forgiveness_requests", currentUser.uid, "items"), (snap) => {
             setForgivenessCount(snap.size);
             checkLoaded();
-        });
+        }, (error) => { console.error("Forgiveness listener error:", error); checkLoaded(); });
 
         const unsubCharity = onSnapshot(collection(db, "charity_wills", currentUser.uid, "items"), (snap) => {
             setCharityCount(snap.size);
             checkLoaded();
-        });
+        }, (error) => { console.error("Charity listener error:", error); checkLoaded(); });
 
         const unsubProjects = onSnapshot(collection(db, "projects", currentUser.uid, "items"), (snap) => {
             setProjectCount(snap.size);
             checkLoaded();
-        });
+        }, (error) => { console.error("Projects listener error:", error); checkLoaded(); });
 
         const unsubGuardian = onSnapshot(collection(db, "guardianship", currentUser.uid, "items"), (snap) => {
             setGuardianCount(snap.size);
             checkLoaded();
-        });
+        }, (error) => { console.error("Guardian listener error:", error); checkLoaded(); });
 
         // Single doc fetches
         getDoc(doc(db, "religious_obligations", currentUser.uid)).then(snap => {

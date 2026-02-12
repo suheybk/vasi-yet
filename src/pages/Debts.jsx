@@ -33,6 +33,7 @@ const Debts = () => {
     // Search & Filter
     const [searchTerm, setSearchTerm] = useState("");
     const [filterStatus, setFilterStatus] = useState("all"); // all | paid | unpaid
+    const [sortBy, setSortBy] = useState("date-new");
 
     const [formData, setFormData] = useState({
         personName: "",
@@ -66,6 +67,12 @@ const Debts = () => {
             (filterStatus === "paid" && debt.isPaid) ||
             (filterStatus === "unpaid" && !debt.isPaid);
         return matchesSearch && matchesFilter;
+    }).sort((a, b) => {
+        if (sortBy === "date-new") return (b.createdAt?.toDate?.() || 0) - (a.createdAt?.toDate?.() || 0);
+        if (sortBy === "date-old") return (a.createdAt?.toDate?.() || 0) - (b.createdAt?.toDate?.() || 0);
+        if (sortBy === "amount-high") return b.amount - a.amount;
+        if (sortBy === "amount-low") return a.amount - b.amount;
+        return 0;
     });
 
     const handleOpenModal = (debt = null) => {
@@ -167,7 +174,7 @@ const Debts = () => {
             {/* Search & Filter */}
             {debts.length > 0 && (
                 <Card className="p-4">
-                    <div className="flex flex-col sm:flex-row gap-4">
+                    <div className="flex flex-col lg:flex-row gap-4">
                         <div className="relative flex-1">
                             <FaSearch className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400" />
                             <input
@@ -178,15 +185,30 @@ const Debts = () => {
                                 className="w-full pl-10 pr-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-red-400 min-h-[44px]"
                             />
                         </div>
-                        <select
-                            value={filterStatus}
-                            onChange={(e) => setFilterStatus(e.target.value)}
-                            className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 bg-white min-h-[44px]"
-                        >
-                            <option value="all">Tümü</option>
-                            <option value="unpaid">Ödenmedi</option>
-                            <option value="paid">Ödendi</option>
-                        </select>
+                        <div className="flex flex-wrap gap-2">
+                            <select
+                                value={filterStatus}
+                                onChange={(e) => setFilterStatus(e.target.value)}
+                                className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 bg-white min-h-[44px] text-sm"
+                            >
+                                <option value="all">Tümü (Durum)</option>
+                                <option value="unpaid">Ödenmedi</option>
+                                <option value="paid">Ödendi</option>
+                            </select>
+                            <select
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                                className="px-4 py-2.5 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-red-300 bg-white min-h-[44px] text-sm"
+                            >
+                                <option value="date-new">En Yeni Önce</option>
+                                <option value="date-old">En Eski Önce</option>
+                                <option value="amount-high">Tutar: Yüksek-Düşük</option>
+                                <option value="amount-low">Tutar: Düşük-Yüksek</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div className="mt-2 text-xs text-gray-400 px-1">
+                        {filteredDebts.length} kayıt bulundu
                     </div>
                 </Card>
             )}

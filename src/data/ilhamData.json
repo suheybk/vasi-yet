@@ -1,0 +1,62 @@
+{
+    "ayetler": [
+        {
+            "id": "a1",
+            "text": "Her nefis ölümü tadacaktır. Sonra Bize döndürüleceksiniz.",
+            "source": "Ankebut Suresi, 57. Ayet",
+            "category": "Death"
+        },
+        {
+            "id": "a2",
+            "text": "Sizden birinize ölüm geldiği zaman, eğer bir hayır (mal) bırakacaksa; anaya, babaya, yakınlara uygun bir biçimde vasiyet etmek Allah’tan korkanlar üzerine bir borçtur.",
+            "source": "Bakara Suresi, 180. Ayet",
+            "category": "Will"
+        },
+        {
+            "id": "a3",
+            "text": "Dünya hayatı ancak bir oyun ve bir eğlencedir. Ahiret yurdu ise Allah'tan korkanlar için daha hayırlıdır. Hâlâ aklınızı başınıza almayacak mısınız?",
+            "source": "En'am Suresi, 32. Ayet",
+            "category": "Ahiret"
+        }
+    ],
+    "hadisler": [
+        {
+            "id": "h1",
+            "text": "Vasiyet edecek bir şeyi bulunan müslümanın, vasiyeti yanında yazılı olmadan iki gece geçirmesi doğru değildir.",
+            "source": "Buhari, Vesaya 1; Müslim, Vasiyye 1",
+            "category": "Will"
+        },
+        {
+            "id": "h2",
+            "text": "İnsan öldüğü zaman, bütün amelleri kesilir. Ancak şu üç şey bundan müstesnadır: Sadaka-i cariye, istifade edilen ilim ve kendisine dua eden salih evlat.",
+            "source": "Müslim, Vasiyye 14; Tirmizi, Ahkam 36",
+            "category": "Charity"
+        },
+        {
+            "id": "h3",
+            "text": "Akıllı kişi, nefsini hesaba çeken ve ölümden sonrası için çalışandır.",
+            "source": "Tirmizi, Kiyame 25",
+            "category": "Wisdom"
+        }
+    ],
+    "hikmetler": [
+        {
+            "id": "w1",
+            "text": "Dün geçti, bugün ise can çekişiyor, yarın henüz doğmadı. Öyleyse anı değerlendir.",
+            "source": "Bişr-i Hafi",
+            "category": "Wisdom"
+        },
+        {
+            "id": "w2",
+            "text": "Ölümü yastığının altında bil, öyle uyu.",
+            "source": "Hz. Ömer (r.a.)",
+            "category": "Death"
+        },
+        {
+            "id": "w3",
+            "text": "Dünya için, dünyada kalacağın kadar çalış; ahiret için ise orada ebedi kalacağın kadar.",
+            "source": "Süfyan-ı Sevri",
+            "category": "Wisdom"
+        }
+    ]
+}

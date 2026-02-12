@@ -1,5 +1,6 @@
 import { BrowserRouter as Router, Routes, Route, Navigate } from "react-router-dom";
 import { AuthProvider, useAuth } from "./context/AuthContext";
+import { PremiumProvider } from "./context/PremiumContext";
 import ProtectedRoute from "./components/ProtectedRoute";
 import MainLayout from "./components/MainLayout";
 import Auth from "./pages/Auth";
@@ -19,6 +20,7 @@ import Projects from "./pages/Projects";
 import Guardianship from "./pages/Guardianship";
 import FuneralPlan from "./pages/FuneralPlan";
 import Profile from "./pages/Profile";
+import Ilham from "./pages/Ilham";
 import { Toaster } from "react-hot-toast";
 
 // Redirect based on auth + onboarding status
@@ -41,148 +43,158 @@ function App() {
   return (
     <Router>
       <AuthProvider>
-        <Toaster
-          position="top-right"
-          toastOptions={{
-            duration: 3000,
-            style: {
-              background: '#1e3a8a',
-              color: '#fff',
-              borderRadius: '12px',
-              padding: '12px 20px',
-            },
-            success: {
-              iconTheme: { primary: '#d4af37', secondary: '#fff' },
-            },
-            error: {
-              style: { background: '#dc2626' },
-            },
-          }}
-        />
-        <Routes>
-          <Route path="/login" element={<Auth />} />
-          <Route path="/gizlilik" element={<PrivacyPolicy />} />
+        <PremiumProvider>
+          <Toaster
+            position="top-right"
+            toastOptions={{
+              duration: 3000,
+              style: {
+                background: '#1e3a8a',
+                color: '#fff',
+                borderRadius: '12px',
+                padding: '12px 20px',
+              },
+              success: {
+                iconTheme: { primary: '#d4af37', secondary: '#fff' },
+              },
+              error: {
+                style: { background: '#dc2626' },
+              },
+            }}
+          />
+          <Routes>
+            <Route path="/login" element={<Auth />} />
+            <Route path="/gizlilik" element={<PrivacyPolicy />} />
 
-          <Route path="/onboarding" element={
-            <ProtectedRoute>
-              <Onboarding />
-            </ProtectedRoute>
-          } />
+            <Route path="/onboarding" element={
+              <ProtectedRoute>
+                <Onboarding />
+              </ProtectedRoute>
+            } />
 
-          <Route path="/" element={<RootRedirect />} />
+            <Route path="/" element={<RootRedirect />} />
 
-          <Route path="/dashboard" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <Dashboard />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/dashboard" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Dashboard />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/borclar" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <Debts />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/borclar" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Debts />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/alacaklar" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <Credits />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/alacaklar" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Credits />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/vasiyet" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <Testament />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/vasiyet" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Testament />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/kisiler" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <Contacts />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/kisiler" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Contacts />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/varliklar" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <Assets />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/varliklar" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Assets />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/emanetler" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <Trusts />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/emanetler" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Trusts />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/dini-yukumlulukler" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <ReligiousObligations />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/dini-yukumlulukler" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <ReligiousObligations />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/helallik" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <ForgivenessRequests />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/helallik" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <ForgivenessRequests />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/hayir-vasiyetleri" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <CharityWills />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/hayir-vasiyetleri" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <CharityWills />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/projeler" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <Projects />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/projeler" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Projects />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/vasi-atama" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <Guardianship />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/vasi-atama" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Guardianship />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/cenaze-plani" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <FuneralPlan />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
+            <Route path="/cenaze-plani" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <FuneralPlan />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
 
-          <Route path="/profil" element={
-            <OnboardedRoute>
-              <MainLayout>
-                <Profile />
-              </MainLayout>
-            </OnboardedRoute>
-          } />
-        </Routes>
+            <Route path="/ilham" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Ilham />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
+
+            <Route path="/profil" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <Profile />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
+          </Routes>
+        </PremiumProvider>
       </AuthProvider>
     </Router>
   );
