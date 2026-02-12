@@ -135,7 +135,7 @@ const MainLayout = ({ children }) => {
                     `}
                 >
                     <div className="flex items-center justify-between h-16 px-6 bg-blue-900 shadow-md shrink-0">
-                        <span className="text-2xl font-bold tracking-wider text-secondary">Vasiyetimdir</span>
+                        <span className="text-2xl font-bold tracking-wider text-secondary">Wasiyet</span>
                         <button onClick={toggleSidebar} className="lg:hidden text-white hover:text-secondary">
                             <FaTimes className="w-6 h-6" />
                         </button>
@@ -230,7 +230,7 @@ const MainLayout = ({ children }) => {
                         <button onClick={toggleSidebar} className="text-white hover:text-secondary">
                             <FaBars className="w-6 h-6" />
                         </button>
-                        <span className="text-xl font-bold text-secondary">Vasiyetimdir</span>
+                        <span className="text-xl font-bold text-secondary">Wasiyet</span>
                         <div className="w-6"></div>
                     </header>
 

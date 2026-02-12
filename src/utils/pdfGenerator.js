@@ -40,7 +40,7 @@ function addPageNumber(pdf, pageNum) {
     pdf.setFontSize(8);
     pdf.setTextColor(...GRAY);
     pdf.text(`Sayfa ${pageNum}`, pageWidth / 2, pageHeight - 10, { align: "center" });
-    pdf.text("Bu belge Vasiyetimdir.app ile oluşturulmuştur", pageWidth / 2, pageHeight - 5, { align: "center" });
+    pdf.text("Bu belge Wasiyet.com ile oluşturulmuştur", pageWidth / 2, pageHeight - 5, { align: "center" });
 }
 
 function addSectionHeader(pdf, title, y) {
@@ -190,7 +190,7 @@ export async function generatePDF(currentUser, userProfile) {
     pdf.line(cx - 40, pageHeight - 50, cx + 40, pageHeight - 50);
     pdf.setFontSize(9);
     pdf.setTextColor(180, 180, 200);
-    pdf.text("vasiyetimdir.app", cx, pageHeight - 40, { align: "center" });
+    pdf.text("wasiyet.com", cx, pageHeight - 40, { align: "center" });
 
     // ═══════════════════════════════════════════
     // PAGE 2: Vasiyet Metni
@@ -560,7 +560,7 @@ export async function generatePDF(currentUser, userProfile) {
     addPageNumber(pdf, pageNum.current);
 
     // Save
-    const fileName = `Vasiyetimdir_${userName.replace(/\s+/g, "_")}_${now.toISOString().slice(0, 10)}.pdf`;
+    const fileName = `Wasiyet_${userName.replace(/\s+/g, "_")}_${now.toISOString().slice(0, 10)}.pdf`;
     pdf.save(fileName);
     return fileName;
 }

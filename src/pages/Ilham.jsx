@@ -93,7 +93,7 @@ const Ilham = () => {
             });
             const dataUrl = canvas.toDataURL("image/png");
             const link = document.createElement("a");
-            link.download = `Vasiyetimdir-${id}.png`;
+            link.download = `Wasiyet-${id}.png`;
             link.href = dataUrl;
             link.click();
             toast.success("Resim indirildi ✓", { id: toastId });
@@ -105,7 +105,7 @@ const Ilham = () => {
 
     const handleShare = async (item) => {
         const shareData = {
-            title: "Vasiyetimdir - İlham",
+            title: "Wasiyet - İlham",
             text: `"${item.text}" — ${item.source}\n\nSen de vasiyetini oluşturmak için tıkla: wasiyet.com`,
             url: "https://wasiyet.com"
         };

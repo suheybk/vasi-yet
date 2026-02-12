@@ -18,10 +18,10 @@ KİŞİSEL VERİLERİN KORUNMASI VE GİZLİLİK SÖZLEŞMESİ
 Son Güncelleme: 12 Şubat 2026 – Sürüm 1.0
 
 1. TARAFLAR
-İşbu sözleşme, Vasiyetimdir platformu ("Platform") ile platformu kullanan gerçek kişi ("Kullanıcı") arasında akdedilmiştir.
+İşbu sözleşme, wasiyet.com platformu ("Platform") ile platformu kullanan gerçek kişi ("Kullanıcı") arasında akdedilmiştir.
 
 2. GİZLİLİK TAAHHÜDÜ
-Vasiyetimdir olarak, kullanıcılarımızın mahremiyetini en üst düzeyde korumayı taahhüt ederiz.
+Wasiyet olarak, kullanıcılarımızın mahremiyetini en üst düzeyde korumayı taahhüt ederiz.
 
 • Vasiyetiniz, borç/alacak kayıtlarınız ve kişisel bilgileriniz HİÇBİR KOŞULDA üçüncü şahıslarla paylaşılmaz.
 • Verileriniz yalnızca sizin erişiminize açıktır.
@@ -125,7 +125,7 @@ const Onboarding = () => {
                 <FaShieldAlt className="text-3xl text-yellow-400" />
             </div>
             <div>
-                <h2 className="text-3xl font-bold text-gray-900">Vasiyetimdir'e Hoş Geldiniz</h2>
+                <h2 className="text-3xl font-bold text-gray-900">Wasiyet'e Hoş Geldiniz</h2>
                 <p className="text-gray-500 mt-3 max-w-md mx-auto">
                     Dijital vasiyetinizi oluşturun, borç ve alacaklarınızı güvenle takip edin.
                     Tüm verileriniz şifrelenmiş olarak korunur.
@@ -315,7 +315,7 @@ const Onboarding = () => {
 
                 {/* Footer */}
                 <p className="text-center text-xs text-gray-400 mt-4">
-                    Vasiyetimdir © 2026 — Tüm hakları saklıdır.
+                    Wasiyet © 2026 — Tüm hakları saklıdır.
                 </p>
             </div>
         </div>

@@ -133,10 +133,10 @@ const DijitalMiras = () => {
             // Informative popup about encryption or use a more advanced method if available
             // For now, we generate the PDF. 
             // Truly encrypted PDF requires jspdf version with encryption support or pdf-lib.
-            doc.save("Vasiyetimdir-Dijital-Miras.pdf");
+            doc.save("Wasiyet-Dijital-Miras.pdf");
             toast.success("PDF oluşturuldu. Not: Standart şifreleme bu versiyonda deneyseldir.");
         } else {
-            doc.save("Vasiyetimdir-Dijital-Miras.pdf");
+            doc.save("Wasiyet-Dijital-Miras.pdf");
         }
     };
 
@@ -442,7 +442,7 @@ const DijitalMiras = () => {
             {/* Backup Tip */}
             <div className="text-center text-xs text-gray-400">
                 <p>⚠️ Bu bilgileri güvenli bir yerde yedeklemeyi unutmayın.</p>
-                <p className="mt-1">Vasiyetimdir uçtan uca şifreleme ile verilerinizi korur.</p>
+                <p className="mt-1">Wasiyet uçtan uca şifreleme ile verilerinizi korur.</p>
             </div>
         </div>
     );

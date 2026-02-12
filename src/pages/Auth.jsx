@@ -89,7 +89,7 @@ const Auth = () => {
                         {isReset ? "Şifre Sıfırlama" : isLogin ? "Tekrar Hoşgeldiniz" : "Hesap Oluşturun"}
                     </h2>
                     <p className="mt-2 text-sm text-gray-600">
-                        {isReset ? "E-posta adresinizi girin, sıfırlama linki gönderelim" : isLogin ? "Hesabınıza giriş yapın" : "Vasiyetimdir ailesine katılın"}
+                        {isReset ? "E-posta adresinizi girin, sıfırlama linki gönderelim" : isLogin ? "Hesabınıza giriş yapın" : "Wasiyet ailesine katılın"}
                     </p>
                 </div>
 
