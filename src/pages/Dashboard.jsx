@@ -6,10 +6,12 @@ import { collection, onSnapshot } from "firebase/firestore";
 import {
     FaCoins, FaGem, FaScroll, FaUserFriends, FaQuoteRight,
     FaChartLine, FaPercentage, FaCalendarAlt, FaBuilding,
-    FaBoxOpen, FaArrowRight, FaPlus, FaShieldAlt
+    FaBoxOpen, FaArrowRight, FaPlus, FaShieldAlt, FaFilePdf
 } from "react-icons/fa";
 import Card from "../components/ui/Card";
 import { formatCurrency } from "../utils/formatters";
+import { generatePDF } from "../utils/pdfGenerator";
+import toast from "react-hot-toast";
 
 const Dashboard = () => {
     const { currentUser, userProfile } = useAuth();
@@ -22,6 +24,20 @@ const Dashboard = () => {
     });
     const [loading, setLoading] = useState(true);
     const [quote, setQuote] = useState({ text: "", source: "" });
+    const [pdfLoading, setPdfLoading] = useState(false);
+
+    const handlePdfDownload = async () => {
+        setPdfLoading(true);
+        try {
+            await generatePDF(currentUser, userProfile);
+            toast.success("PDF indirildi ✓");
+        } catch (error) {
+            console.error(error);
+            toast.error("PDF oluşturulurken hata oluştu.");
+        } finally {
+            setPdfLoading(false);
+        }
+    };
 
     const quotes = [
         { text: "Her nefis ölümü tadacaktır. Sizi bir imtihan olarak hayır ile de şer ile de deniyoruz. Ancak bize döndürüleceksiniz.", source: "Enbiyâ Suresi, 35. Ayet" },
@@ -139,9 +155,19 @@ const Dashboard = () => {
                 <p className="mt-2 text-blue-100 relative z-10 max-w-2xl">
                     Bugün vasiyetinizi güncellemek veya mali durumunuzu gözden geçirmek için güzel bir gün.
                 </p>
-                <div className="mt-6 pt-6 border-t border-blue-400/30 relative z-10">
-                    <p className="font-serif italic text-lg text-yellow-500">"{quote.text}"</p>
-                    <p className="text-sm text-blue-200 mt-2">— {quote.source}</p>
+                <div className="mt-6 pt-6 border-t border-blue-400/30 relative z-10 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-4">
+                    <div>
+                        <p className="font-serif italic text-lg text-yellow-500">"{quote.text}"</p>
+                        <p className="text-sm text-blue-200 mt-2">— {quote.source}</p>
+                    </div>
+                    <button
+                        onClick={handlePdfDownload}
+                        disabled={pdfLoading}
+                        className="flex items-center gap-2 bg-yellow-500 hover:bg-yellow-400 text-blue-900 font-bold px-6 py-3 rounded-xl transition-all hover:-translate-y-0.5 shadow-lg disabled:opacity-60 disabled:cursor-not-allowed min-h-[48px] flex-shrink-0"
+                    >
+                        <FaFilePdf className="text-lg" />
+                        {pdfLoading ? "PDF Hazırlanıyor..." : "PDF İndir"}
+                    </button>
                 </div>
             </div>
 
