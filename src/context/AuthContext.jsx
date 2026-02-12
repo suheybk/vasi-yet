@@ -4,7 +4,8 @@ import {
     signInWithEmailAndPassword,
     signOut,
     onAuthStateChanged,
-    sendEmailVerification
+    sendEmailVerification,
+    sendPasswordResetEmail
 } from "firebase/auth";
 import { auth, db } from "../firebase/config";
 import { doc, getDoc } from "firebase/firestore";
@@ -31,6 +32,10 @@ export const AuthProvider = ({ children }) => {
     const logout = () => {
         setUserProfile(null);
         return signOut(auth);
+    };
+
+    const resetPassword = (email) => {
+        return sendPasswordResetEmail(auth, email);
     };
 
     const refreshProfile = async (uid) => {
@@ -70,7 +75,8 @@ export const AuthProvider = ({ children }) => {
         refreshProfile,
         signup,
         login,
-        logout
+        logout,
+        resetPassword
     };
 
     return (

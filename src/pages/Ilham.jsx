@@ -1,17 +1,21 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useAuth } from "../context/AuthContext";
+import { usePremium } from "../context/PremiumContext";
 import { db } from "../firebase/config";
 import { collection, addDoc, serverTimestamp, query, onSnapshot } from "firebase/firestore";
-import { FaBookOpen, FaHeart, FaShareAlt, FaCopy, FaQuoteLeft } from "react-icons/fa";
+import { FaBookOpen, FaHeart, FaShareAlt, FaCopy, FaQuoteLeft, FaDownload, FaWhatsapp } from "react-icons/fa";
 import toast from "react-hot-toast";
 import Card from "../components/ui/Card";
 import ilhamData from "../data/ilhamData.json";
+import html2canvas from "html2canvas";
 
 const Ilham = () => {
     const { currentUser } = useAuth();
+    const { handleShareSuccess } = usePremium();
     const [activeCategory, setActiveCategory] = useState("all");
     const [favorites, setFavorites] = useState([]);
     const [randomDaily, setRandomDaily] = useState(null);
+    const cardRefs = useRef({});
 
     useEffect(() => {
         // Set a random quote for the day (using date as seed)
@@ -55,6 +59,73 @@ const Ilham = () => {
         toast.success("Panoya kopyalandı ✓");
     };
 
+    const handleDownload = async (id, text) => {
+        const element = cardRefs.current[id];
+        if (!element) return;
+
+        const toastId = toast.loading("Resim hazırlanıyor...");
+        try {
+            const canvas = await html2canvas(element, {
+                backgroundColor: "#ffffff",
+                scale: 2,
+                logging: false,
+                useCORS: true,
+                onclone: (clonedDoc) => {
+                    // Critical: html2canvas v1.x doesn't support OKLCH colors used by Tailwind 4.
+                    // We must find and replace them in the cloned DOM before rendering.
+                    const allElements = clonedDoc.getElementsByTagName("*");
+                    for (let i = 0; i < allElements.length; i++) {
+                        const el = allElements[i];
+                        const style = window.getComputedStyle(el);
+
+                        // Check common color properties
+                        ['color', 'backgroundColor', 'borderColor', 'outlineColor'].forEach(prop => {
+                            const val = style[prop];
+                            if (val && val.includes('oklch')) {
+                                // Fallback to a safe color if oklch is detected
+                                if (prop === 'color') el.style[prop] = '#1f2937';
+                                if (prop === 'backgroundColor' && val !== 'rgba(0, 0, 0, 0)') el.style[prop] = '#ffffff';
+                                if (prop === 'borderColor') el.style[prop] = '#e5e7eb';
+                            }
+                        });
+                    }
+                }
+            });
+            const dataUrl = canvas.toDataURL("image/png");
+            const link = document.createElement("a");
+            link.download = `Vasiyetimdir-${id}.png`;
+            link.href = dataUrl;
+            link.click();
+            toast.success("Resim indirildi ✓", { id: toastId });
+        } catch (error) {
+            console.error(error);
+            toast.error("Resim oluşturulurken bir hata oluştu.", { id: toastId });
+        }
+    };
+
+    const handleShare = async (item) => {
+        const shareData = {
+            title: "Vasiyetimdir - İlham",
+            text: `"${item.text}" — ${item.source}\n\nSen de vasiyetini oluşturmak için tıkla: wasiyet.com`,
+            url: "https://wasiyet.com"
+        };
+
+        try {
+            if (navigator.share) {
+                await navigator.share(shareData);
+                handleShareSuccess();
+                toast.success("Paylaşıldı ✓");
+            } else {
+                // Fallback to WhatsApp
+                const whatsappUrl = `https://wa.me/?text=${encodeURIComponent(shareData.text)}`;
+                window.open(whatsappUrl, "_blank");
+                handleShareSuccess();
+            }
+        } catch (error) {
+            console.error("Share failed", error);
+        }
+    };
+
     const categories = [
         { id: "all", label: "Hepsi", icon: <FaBookOpen /> },
         { id: "ayetler", label: "Ayetler", icon: <FaBookOpen /> },
@@ -79,28 +150,39 @@ const Ilham = () => {
 
             {/* Daily Quote */}
             {randomDaily && (
-                <Card className="p-8 bg-gradient-to-br from-blue-900 to-indigo-900 text-white relative overflow-hidden shadow-xl border-none">
-                    <FaQuoteLeft className="absolute -top-4 -left-4 text-8xl text-white/5" />
-                    <div className="relative z-10 text-center space-y-6">
-                        <div className="inline-block px-3 py-1 bg-white/10 rounded-full text-xs font-bold uppercase tracking-widest text-blue-200">
-                            Günün Mesajı
+                <div ref={el => cardRefs.current['daily'] = el}>
+                    <Card
+                        style={{ background: 'linear-gradient(to bottom right, #1e3a8a, #312e81)' }}
+                        className="p-8 text-white relative overflow-hidden shadow-xl border-none"
+                    >
+                        <FaQuoteLeft className="absolute -top-4 -left-4 text-8xl text-white/5" />
+                        <div className="relative z-10 text-center space-y-6">
+                            <div className="inline-block px-3 py-1 bg-white/10 rounded-full text-xs font-bold uppercase tracking-widest" style={{ color: '#bfdbfe' }}>
+                                Günün Mesajı
+                            </div>
+                            <p className="text-xl md:text-2xl font-serif italic leading-relaxed" style={{ color: '#ffffff' }}>
+                                "{randomDaily.text}"
+                            </p>
+                            <div style={{ color: '#bfdbfe' }} className="font-medium">
+                                — {randomDaily.source}
+                            </div>
+                            <div className="flex justify-center gap-4 pt-4 no-canvas">
+                                <button onClick={() => handleFavorite(randomDaily)} className="p-3 rounded-full transition" style={{ backgroundColor: favorites.includes(randomDaily.id) ? "#ef4444" : "rgba(255,255,255,0.1)", color: "#ffffff" }}>
+                                    <FaHeart />
+                                </button>
+                                <button onClick={() => handleDownload('daily', randomDaily.text)} className="p-3 rounded-full transition" style={{ backgroundColor: "rgba(255,255,255,0.1)", color: "#ffffff" }}>
+                                    <FaDownload />
+                                </button>
+                                <button onClick={() => handleShare(randomDaily)} className="p-3 rounded-full transition" style={{ backgroundColor: "rgba(255,255,255,0.1)", color: "#ffffff" }}>
+                                    <FaShareAlt />
+                                </button>
+                                <button onClick={() => handleCopy(randomDaily.text)} className="p-3 rounded-full transition" style={{ backgroundColor: "rgba(255,255,255,0.1)", color: "#ffffff" }}>
+                                    <FaCopy />
+                                </button>
+                            </div>
                         </div>
-                        <p className="text-xl md:text-2xl font-serif italic leading-relaxed">
-                            "{randomDaily.text}"
-                        </p>
-                        <div className="text-blue-300 font-medium">
-                            — {randomDaily.source}
-                        </div>
-                        <div className="flex justify-center gap-4 pt-4">
-                            <button onClick={() => handleFavorite(randomDaily)} className={`p-3 rounded-full transition ${favorites.includes(randomDaily.id) ? "bg-red-500 text-white" : "bg-white/10 hover:bg-white/20"}`}>
-                                <FaHeart />
-                            </button>
-                            <button onClick={() => handleCopy(randomDaily.text)} className="p-3 bg-white/10 hover:bg-white/20 rounded-full transition">
-                                <FaCopy />
-                            </button>
-                        </div>
-                    </div>
-                </Card>
+                    </Card>
+                </div>
             )}
 
             {/* Categories */}
@@ -120,29 +202,45 @@ const Ilham = () => {
             {/* Items Grid */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 {getItems().map((item, i) => (
-                    <Card key={i} className="p-6 hover:shadow-lg transition flex flex-col justify-between group">
-                        <div className="space-y-4">
-                            <div className="flex justify-between items-start">
-                                <span className="text-xs font-bold text-blue-600 uppercase tracking-tighter bg-blue-50 px-2 py-1 rounded">
-                                    {item.category}
-                                </span>
-                                <div className="flex gap-2 opacity-0 group-hover:opacity-100 transition">
-                                    <button onClick={() => handleFavorite(item)} className={`p-2 rounded-lg transition ${favorites.includes(item.id) ? "text-red-500" : "text-gray-400 hover:text-red-500"}`}>
-                                        <FaHeart />
-                                    </button>
-                                    <button onClick={() => handleCopy(item.text)} className="p-2 text-gray-400 hover:text-blue-600 rounded-lg transition">
-                                        <FaCopy />
-                                    </button>
+                    <div key={item.id} ref={el => cardRefs.current[item.id] = el}>
+                        <Card className="p-6 hover:shadow-lg transition flex flex-col justify-between group h-full bg-white">
+                            <div className="space-y-4">
+                                <div className="flex justify-between items-start">
+                                    <span style={{ backgroundColor: '#eff6ff', color: '#2563eb' }} className="text-xs font-bold uppercase tracking-tighter px-2 py-1 rounded">
+                                        {item.category}
+                                    </span>
+                                    <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition no-canvas">
+                                        <button onClick={() => handleFavorite(item)} className="p-2 rounded-lg transition" style={{ color: favorites.includes(item.id) ? "#ef4444" : "#9ca3af" }}>
+                                            <FaHeart title="Favorilere Ekle" />
+                                        </button>
+                                        <button onClick={() => handleDownload(item.id, item.text)} className="p-2 rounded-lg transition" style={{ color: "#9ca3af" }}>
+                                            <FaDownload title="Resim Olarak İndir" />
+                                        </button>
+                                        <button onClick={() => handleShare(item)} className="p-2 rounded-lg transition" style={{ color: "#9ca3af" }}>
+                                            <FaShareAlt title="Paylaş" />
+                                        </button>
+                                        <button onClick={() => handleCopy(item.text)} className="p-2 rounded-lg transition" style={{ color: "#9ca3af" }}>
+                                            <FaCopy title="Metni Kopyala" />
+                                        </button>
+                                    </div>
                                 </div>
+                                <p className="leading-relaxed font-medium" style={{ color: '#374151' }}>"{item.text}"</p>
                             </div>
-                            <p className="text-gray-700 leading-relaxed font-medium">"{item.text}"</p>
-                        </div>
-                        <div className="mt-6 pt-4 border-t border-gray-50 text-right text-xs text-gray-400 italic">
-                            {item.source}
-                        </div>
-                    </Card>
+                            <div className="mt-6 pt-4 text-right text-xs italic" style={{ borderTop: '1px solid #f9fafb', color: '#9ca3af' }}>
+                                {item.source}
+                            </div>
+                        </Card>
+                    </div>
                 ))}
             </div>
+
+            <style jsx>{`
+                @media screen {
+                    .no-canvas {
+                        /* html2canvas will ignore elements with this attribute or we can omit them */
+                    }
+                }
+            `}</style>
         </div>
     );
 };

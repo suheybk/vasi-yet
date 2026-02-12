@@ -2,21 +2,22 @@ import { createContext, useContext, useEffect, useState } from "react";
 import { useAuth } from "./AuthContext";
 import { db } from "../firebase/config";
 import { doc, onSnapshot, setDoc, serverTimestamp } from "firebase/firestore";
+import toast from "react-hot-toast";
 
 const PremiumContext = createContext();
 
 export const usePremium = () => useContext(PremiumContext);
 
 // Free features (accessible without premium)
-export const FREE_FEATURES = ["/vasiyet", "/borclar", "/helallik", "/hayir-vasiyetleri", "/dashboard", "/profil", "/gizlilik", "/ilham"];
+export const FREE_FEATURES = ["/vasiyet", "/borclar", "/helallik", "/hayir-vasiyetleri", "/dashboard", "/profil", "/gizlilik", "/ilham", "/onboarding"];
 
 export const PLANS = [
     {
         id: "basic",
         name: "Temel Plan",
-        monthlyPrice: 2.99,
-        annualPrice: 36,
-        currency: "$",
+        monthlyPrice: 99,
+        annualPrice: 999,
+        currency: "₺",
         features: ["Tüm modüllere erişim", "PDF dışa aktarma", "Sınırsız kayıt", "E-posta desteği"],
         hasAnnual: true,
         popular: true,
@@ -24,9 +25,9 @@ export const PLANS = [
     {
         id: "pro",
         name: "Pro Plan",
-        monthlyPrice: 4.99,
+        monthlyPrice: 149,
         annualPrice: null,
-        currency: "$",
+        currency: "₺",
         features: ["Tüm Temel Plan özellikleri", "Öncelikli destek", "Gelişmiş raporlama", "Aile hesabı (yakında)"],
         hasAnnual: false,
         popular: false,
@@ -68,6 +69,11 @@ export const PremiumProvider = ({ children }) => {
             const trialEnd = subscription.trialEnd.toDate ? subscription.trialEnd.toDate() : new Date(subscription.trialEnd);
             return new Date() < trialEnd;
         }
+        // Check reward (from sharing)
+        if (subscription.status === "rewarded" && subscription.rewardEnd) {
+            const rewardEnd = subscription.rewardEnd.toDate ? subscription.rewardEnd.toDate() : new Date(subscription.rewardEnd);
+            return new Date() < rewardEnd;
+        }
         return false;
     })();
 
@@ -97,7 +103,47 @@ export const PremiumProvider = ({ children }) => {
             plan: planId,
             billing: billing, // "monthly" or "annual"
             startedAt: serverTimestamp()
-        });
+        }, { merge: true });
+    };
+
+    const handleShareSuccess = async () => {
+        if (!currentUser) return;
+        const today = new Date().toISOString().split('T')[0];
+
+        const currentData = subscription || {};
+        const lastShareDate = currentData.lastShareDate;
+        let streak = currentData.shareStreak || 0;
+
+        if (lastShareDate === today) return; // Already shared today
+
+        const yesterday = new Date();
+        yesterday.setDate(yesterday.getDate() - 1);
+        const yesterdayStr = yesterday.toISOString().split('T')[0];
+
+        if (lastShareDate === yesterdayStr) {
+            streak += 1;
+        } else {
+            streak = 1;
+        }
+
+        const updateData = {
+            lastShareDate: today,
+            shareStreak: streak,
+            updatedAt: serverTimestamp()
+        };
+
+        if (streak >= 3) {
+            const rewardEnd = new Date();
+            rewardEnd.setHours(rewardEnd.getHours() + 24);
+            updateData.status = "rewarded";
+            updateData.rewardEnd = rewardEnd;
+            updateData.shareStreak = 0; // Reset after reward
+            toast.success("Tebrikler! 3 gün üst üste paylaşım yaptığınız için 24 saatlik Premium hediye edildi! 🎉");
+        } else {
+            toast.success(`Paylaşım kaydedildi! Premium hediye için ${3 - streak} gün daha paylaşın. 🔥`);
+        }
+
+        await setDoc(doc(db, "subscriptions", currentUser.uid), updateData, { merge: true });
     };
 
     const daysLeftInTrial = (() => {
@@ -113,6 +159,7 @@ export const PremiumProvider = ({ children }) => {
         isFeatureLocked,
         startTrial,
         subscribeToPlan,
+        handleShareSuccess,
         daysLeftInTrial,
         loading,
         PLANS

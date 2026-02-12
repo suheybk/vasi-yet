@@ -71,5 +71,9 @@ service cloud.firestore {
       allow read: if isOwner(userId);
       allow write: if isOwner(userId); // Usually handled by webhooks, but allowing for simple client-side updates (trial start)
     }
+
+    match /digital_legacy/{userId}/accounts/{account} {
+      allow read, write: if isOwner(userId);
+    }
   }
 }

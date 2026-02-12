@@ -6,24 +6,41 @@ import Button from "../components/ui/Button";
 import Input from "../components/ui/Input";
 
 const Auth = () => {
-    const { login, signup } = useAuth();
+    const { login, signup, resetPassword } = useAuth();
     const navigate = useNavigate();
 
-    // Auth State: 'login' or 'signup'
+    // Auth State: 'login', 'signup', or 'reset'
     const [mode, setMode] = useState("login");
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [error, setError] = useState("");
+    const [message, setMessage] = useState("");
     const [loading, setLoading] = useState(false);
 
     const isLogin = mode === "login";
+    const isSignup = mode === "signup";
+    const isReset = mode === "reset";
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-
         setError("");
+        setMessage("");
 
-        // Basic validation
+        if (isReset) {
+            if (!email) return setError("Lütfen e-posta adresinizi girin.");
+            setLoading(true);
+            try {
+                await resetPassword(email);
+                setMessage("Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.");
+            } catch (err) {
+                setError("Hata: " + err.message);
+            } finally {
+                setLoading(false);
+            }
+            return;
+        }
+
+        // Basic validation for login/signup
         if (password.length < 6) {
             return setError("Şifre en az 6 karakter olmalıdır.");
         }
@@ -33,13 +50,12 @@ const Auth = () => {
         try {
             if (isLogin) {
                 await login(email, password);
-            } else {
+            } else if (isSignup) {
                 await signup(email, password);
             }
             navigate("/");
         } catch (err) {
             console.error(err);
-            // Firebase error mapping could be better, but keeping it simple for now
             if (err.code === 'auth/email-already-in-use') {
                 setError("Bu e-posta adresi zaten kullanımda.");
             } else if (err.code === 'auth/wrong-password' || err.code === 'auth/user-not-found' || err.code === 'auth/invalid-credential') {
@@ -52,14 +68,15 @@ const Auth = () => {
         }
     };
 
-    const toggleMode = () => {
-        setMode(isLogin ? "signup" : "login");
+    const toggleMode = (newMode) => {
+        setMode(newMode);
         setError("");
+        setMessage("");
     };
 
     return (
         <div className="flex min-h-screen items-center justify-center bg-background px-4 py-12 sm:px-6 lg:px-8 relative overflow-hidden">
-            {/* Background Pattern - subtle geometric overlay */}
+            {/* Background Pattern */}
             <div className="absolute inset-0 z-0 opacity-5 pointer-events-none"
                 style={{
                     backgroundImage: `url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%231f2937' fill-opacity='1'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")`,
@@ -69,23 +86,28 @@ const Auth = () => {
             <div className="w-full max-w-md space-y-8 bg-white p-10 rounded-2xl shadow-xl z-10 border border-gray-100">
                 <div className="text-center">
                     <h2 className="mt-2 text-3xl font-extrabold text-blue-900">
-                        {isLogin ? "Tekrar Hoşgeldiniz" : "Hesap Oluşturun"}
+                        {isReset ? "Şifre Sıfırlama" : isLogin ? "Tekrar Hoşgeldiniz" : "Hesap Oluşturun"}
                     </h2>
                     <p className="mt-2 text-sm text-gray-600">
-                        {isLogin ? "Hesabınıza giriş yapın" : "Vasiyetimdir ailesine katılın"}
+                        {isReset ? "E-posta adresinizi girin, sıfırlama linki gönderelim" : isLogin ? "Hesabınıza giriş yapın" : "Vasiyetimdir ailesine katılın"}
                     </p>
                 </div>
 
                 {error && (
                     <div className="bg-red-50 border-l-4 border-red-500 p-4 rounded-md">
                         <div className="flex">
-                            <div className="flex-shrink-0">
-                                <svg className="h-5 w-5 text-red-500" viewBox="0 0 20 20" fill="currentColor">
-                                    <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clipRule="evenodd" />
-                                </svg>
-                            </div>
                             <div className="ml-3">
                                 <p className="text-sm text-red-700">{error}</p>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                {message && (
+                    <div className="bg-green-50 border-l-4 border-green-500 p-4 rounded-md">
+                        <div className="flex">
+                            <div className="ml-3">
+                                <p className="text-sm text-green-700">{message}</p>
                             </div>
                         </div>
                     </div>
@@ -103,37 +125,45 @@ const Auth = () => {
                                 type="email"
                                 autoComplete="email"
                                 required
-                                className="pl-6" // Adjust padding for icon
+                                className="pl-6"
                                 placeholder="E-posta adresi"
                                 value={email}
                                 onChange={(e) => setEmail(e.target.value)}
                             />
                         </div>
-                        <div className="relative">
-                            <div className="absolute top-3 left-0 pl-3 flex items-center pointer-events-none text-gray-400 z-10">
-                                <FaLock />
+                        {!isReset && (
+                            <div className="relative">
+                                <div className="absolute top-3 left-0 pl-3 flex items-center pointer-events-none text-gray-400 z-10">
+                                    <FaLock />
+                                </div>
+                                <Input
+                                    id="password"
+                                    name="password"
+                                    type="password"
+                                    autoComplete="current-password"
+                                    required
+                                    className="pl-6"
+                                    placeholder="Şifre"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                />
                             </div>
-                            <Input
-                                id="password"
-                                name="password"
-                                type="password"
-                                autoComplete="current-password"
-                                required
-                                className="pl-6" // Adjust padding for icon
-                                placeholder="Şifre"
-                                value={password}
-                                onChange={(e) => setPassword(e.target.value)}
-                            />
-                        </div>
+                        )}
                     </div>
 
-                    <div className="flex items-center justify-between">
-                        <div className="text-sm">
-                            <a href="#" className="font-medium text-blue-600 hover:text-blue-500 transition-colors">
-                                Şifremi unuttum?
-                            </a>
+                    {isLogin && (
+                        <div className="flex items-center justify-between">
+                            <div className="text-sm">
+                                <button
+                                    type="button"
+                                    onClick={() => toggleMode("reset")}
+                                    className="font-medium text-blue-600 hover:text-blue-500 transition-colors"
+                                >
+                                    Şifremi unuttum?
+                                </button>
+                            </div>
                         </div>
-                    </div>
+                    )}
 
                     <div>
                         <Button
@@ -143,31 +173,45 @@ const Auth = () => {
                             variant="primary"
                             className="group relative flex justify-center py-3"
                         >
-                            {loading ? (
+                            {loading && (
                                 <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>
-                            ) : null}
-                            {isLogin ? "Giriş Yap" : "Kayıt Ol"}
+                            )}
+                            {isReset ? "Sıfırlama Linki Gönder" : isLogin ? "Giriş Yap" : "Kayıt Ol"}
                         </Button>
                     </div>
+
+                    {isReset && (
+                        <div className="text-center">
+                            <button
+                                type="button"
+                                onClick={() => toggleMode("login")}
+                                className="text-sm font-medium text-blue-600 hover:text-blue-500"
+                            >
+                                Giriş sayfasına dön
+                            </button>
+                        </div>
+                    )}
                 </form>
 
-                <div className="text-center mt-4">
-                    <p className="text-sm text-gray-600">
-                        {isLogin ? "Hesabınız yok mu? " : "Zaten hesabınız var mı? "}
-                        <button
-                            onClick={toggleMode}
-                            className="font-medium text-yellow-600 hover:text-yellow-500 transition-colors focus:outline-none underline"
-                        >
-                            {isLogin ? "Kayıt Olun" : "Giriş Yapın"}
-                        </button>
-                    </p>
-                    <p className="text-xs text-gray-400 mt-3">
-                        Kayıt olarak <a href="/gizlilik" className="underline hover:text-gray-600" target="_blank" rel="noreferrer">KVKK ve Gizlilik Sözleşmesi</a>'ni kabul etmiş sayılırsınız.
-                    </p>
-                </div>
+                {!isReset && (
+                    <div className="text-center mt-4">
+                        <p className="text-sm text-gray-600">
+                            {isLogin ? "Hesabınız yok mu? " : "Zaten hesabınız var mı? "}
+                            <button
+                                onClick={() => toggleMode(isLogin ? "signup" : "login")}
+                                className="font-medium text-yellow-600 hover:text-yellow-500 transition-colors focus:outline-none underline"
+                            >
+                                {isLogin ? "Kayıt Olun" : "Giriş Yapın"}
+                            </button>
+                        </p>
+                        <p className="text-xs text-gray-400 mt-3">
+                            Kayıt olarak <a href="/gizlilik" className="underline hover:text-gray-600" target="_blank" rel="noreferrer">KVKK ve Gizlilik Sözleşmesi</a>'ni kabul etmiş sayılırsınız.
+                        </p>
+                    </div>
+                )}
             </div>
         </div>
     );

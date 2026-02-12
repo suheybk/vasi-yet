@@ -21,6 +21,7 @@ import Guardianship from "./pages/Guardianship";
 import FuneralPlan from "./pages/FuneralPlan";
 import Profile from "./pages/Profile";
 import Ilham from "./pages/Ilham";
+import DijitalMiras from "./pages/DijitalMiras";
 import { Toaster } from "react-hot-toast";
 
 // Redirect based on auth + onboarding status
@@ -190,6 +191,13 @@ function App() {
               <OnboardedRoute>
                 <MainLayout>
                   <Profile />
+                </MainLayout>
+              </OnboardedRoute>
+            } />
+            <Route path="/dijital-miras" element={
+              <OnboardedRoute>
+                <MainLayout>
+                  <DijitalMiras />
                 </MainLayout>
               </OnboardedRoute>
             } />

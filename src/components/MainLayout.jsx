@@ -21,7 +21,8 @@ import {
     FaSignOutAlt,
     FaCrown,
     FaExclamationCircle,
-    FaLightbulb
+    FaLightbulb,
+    FaGlobe
 } from "react-icons/fa";
 import PricingModal from "./PricingModal";
 import toast from "react-hot-toast";
@@ -85,6 +86,7 @@ const MainLayout = ({ children }) => {
         { path: "/vasi-atama", label: "Vasi Atama", icon: <FaShieldAlt />, isPremium: true },
         { path: "/cenaze-plani", label: "Cenaze Planı", icon: <FaMosque />, isPremium: true },
         { path: "/kisiler", label: "Güvenilir Kişiler", icon: <FaUserFriends />, isPremium: true },
+        { path: "/dijital-miras", label: "Dijital Miras", icon: <FaGlobe />, isPremium: true },
     ];
 
     const isEmailVerified = currentUser?.emailVerified;

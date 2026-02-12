@@ -54,7 +54,7 @@ Platform aşağıdaki verileri toplar ve işler:
 • Güvenilir kişi bilgileri (uygulama işlevselliği)
 
 6. VERİLERİN SİLİNMESİ
-Hesabınızı silmek istediğinizde, tüm kişisel verileriniz geri dönülemez şekilde silinir. Bu talep için destek@vasiyetimdir.com adresine e-posta gönderebilirsiniz.
+Hesabınızı silmek istediğinizde, tüm kişisel verileriniz geri dönülemez şekilde silinir. Bu talep için info@wasiyet.com adresine e-posta gönderebilirsiniz.
 
 7. ÇEREZLER VE ANALİTİK
 Platform, kullanıcı deneyimini iyileştirmek amacıyla Google Analytics kullanmaktadır. Toplanan veriler anonimleştirilmiş istatistiksel verilerdir ve kişisel olarak tanımlanabilir bilgi içermez.
@@ -62,7 +62,7 @@ Platform, kullanıcı deneyimini iyileştirmek amacıyla Google Analytics kullan
 8. SÖZLEŞMENİN KABULÜ
 Bu sözleşmeyi kabul etmekle, yukarıdaki şartları okuduğunuzu, anladığınızı ve kabul ettiğinizi beyan edersiniz.
 
-İletişim: destek@vasiyetimdir.com
+İletişim: info@wasiyet.com
 `.trim();
 
 const Onboarding = () => {
@@ -262,8 +262,8 @@ const Onboarding = () => {
                     {steps.map((_, i) => (
                         <div key={i} className="flex items-center">
                             <div className={`w-8 h-8 rounded-full flex items-center justify-center text-sm font-bold transition-all duration-300 ${i < step ? 'bg-green-500 text-white' :
-                                    i === step ? 'bg-blue-900 text-white scale-110 shadow-lg' :
-                                        'bg-gray-200 text-gray-400'
+                                i === step ? 'bg-blue-900 text-white scale-110 shadow-lg' :
+                                    'bg-gray-200 text-gray-400'
                                 }`}>
                                 {i < step ? <FaCheck className="text-xs" /> : i + 1}
                             </div>

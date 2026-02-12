@@ -39,7 +39,7 @@ const PrivacyPolicy = () => {
 
                         <section>
                             <h2 className="text-lg font-bold text-gray-900 border-b pb-2">1. Taraflar</h2>
-                            <p>İşbu sözleşme, Vasiyetimdir platformu ("Platform") ile platformu kullanan gerçek kişi ("Kullanıcı") arasında akdedilmiştir.</p>
+                            <p>İşbu sözleşme, wasiyet.com platformu ("Platform") ile platformu kullanan gerçek kişi ("Kullanıcı") arasında akdedilmiştir.</p>
                         </section>
 
                         <section>
@@ -91,7 +91,7 @@ const PrivacyPolicy = () => {
                             <h2 className="text-lg font-bold text-gray-900 border-b pb-2">6. Verilerin Silinmesi</h2>
                             <p>
                                 Hesabınızı silmek istediğinizde, tüm kişisel verileriniz geri dönülemez şekilde silinir.
-                                Bu talep için <strong>destek@vasiyetimdir.com</strong> adresine e-posta gönderebilirsiniz.
+                                Bu talep için <strong>info@wasiyet.com</strong> adresine e-posta gönderebilirsiniz.
                             </p>
                         </section>
 
@@ -108,7 +108,7 @@ const PrivacyPolicy = () => {
                                 <FaEnvelope /> İletişim
                             </div>
                             <p className="text-blue-700 text-sm">
-                                Sorularınız için: <strong>destek@vasiyetimdir.com</strong>
+                                Sorularınız için: <strong>info@wasiyet.com</strong>
                             </p>
                         </div>
                     </div>
