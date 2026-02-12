@@ -50,6 +50,7 @@ const MainLayout = ({ children }) => {
         { path: "/helallik", label: "Helallik İsteği", icon: <FaHandshake /> },
         { path: "/hayir-vasiyetleri", label: "Hayır Vasiyetleri", icon: <FaHandHoldingHeart /> },
         { path: "/projeler", label: "İş ve Projeler", icon: <FaBriefcase /> },
+        { path: "/vasi-atama", label: "Vasi Atama", icon: <FaShieldAlt /> },
         { path: "/kisiler", label: "Güvenilir Kişiler", icon: <FaUserFriends /> },
         { path: "/profil", label: "Profilim", icon: <FaUser /> },
     ];

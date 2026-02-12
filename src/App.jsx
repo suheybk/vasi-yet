@@ -16,6 +16,7 @@ import ReligiousObligations from "./pages/ReligiousObligations";
 import ForgivenessRequests from "./pages/ForgivenessRequests";
 import CharityWills from "./pages/CharityWills";
 import Projects from "./pages/Projects";
+import Guardianship from "./pages/Guardianship";
 import Profile from "./pages/Profile";
 import { Toaster } from "react-hot-toast";
 
@@ -153,6 +154,14 @@ function App() {
             <OnboardedRoute>
               <MainLayout>
                 <Projects />
+              </MainLayout>
+            </OnboardedRoute>
+          } />
+
+          <Route path="/vasi-atama" element={
+            <OnboardedRoute>
+              <MainLayout>
+                <Guardianship />
               </MainLayout>
             </OnboardedRoute>
           } />
