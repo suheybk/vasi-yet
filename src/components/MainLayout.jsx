@@ -9,6 +9,7 @@ import {
     FaGem,
     FaScroll,
     FaBuilding,
+    FaBoxOpen,
     FaUserFriends,
     FaUser,
     FaShieldAlt,
@@ -40,6 +41,7 @@ const MainLayout = ({ children }) => {
         { path: "/alacaklar", label: "Alacaklarım", icon: <FaGem /> },
         { path: "/vasiyet", label: "Vasiyet", icon: <FaScroll /> },
         { path: "/varliklar", label: "Mal Varlığı", icon: <FaBuilding /> },
+        { path: "/emanetler", label: "Emanetler", icon: <FaBoxOpen /> },
         { path: "/kisiler", label: "Güvenilir Kişiler", icon: <FaUserFriends /> },
         { path: "/profil", label: "Profilim", icon: <FaUser /> },
     ];

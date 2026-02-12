@@ -11,6 +11,7 @@ import Credits from "./pages/Credits";
 import Testament from "./pages/Testament";
 import Contacts from "./pages/Contacts";
 import Assets from "./pages/Assets";
+import Trusts from "./pages/Trusts";
 import Profile from "./pages/Profile";
 import { Toaster } from "react-hot-toast";
 
@@ -108,6 +109,14 @@ function App() {
             <OnboardedRoute>
               <MainLayout>
                 <Assets />
+              </MainLayout>
+            </OnboardedRoute>
+          } />
+
+          <Route path="/emanetler" element={
+            <OnboardedRoute>
+              <MainLayout>
+                <Trusts />
               </MainLayout>
             </OnboardedRoute>
           } />
